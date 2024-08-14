@@ -1,0 +1,4 @@
+lighthouse1 192.168.100.1/24 lighthouse
+frederic-mb 192.168.100.2/24 node
+Dee 192.168.100.3/24 node
+frederic-tp 192.168.100.4/24 node
