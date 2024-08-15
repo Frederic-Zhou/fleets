@@ -82,6 +82,7 @@ elif action == "2":
     if is_lighthouse:
         config_data["static_host_map"] = {}
         config_data["lighthouse"] = {"am_lighthouse": True}
+        config_data["relay"] = {"am_relay": True, "use_relays": False}
     else:
         lighthouse_ip = input("请输入lighthouse的IP地址: ")
         lighthouse_public_ip = input("请输入lighthouse的真实开放IP地址: ")
@@ -92,6 +93,11 @@ elif action == "2":
             "am_lighthouse": False,
             "interval": 60,
             "hosts": [lighthouse_ip],
+        }
+        config_data["relay"] = {
+            "am_relay": False,
+            "relays": [lighthouse_ip],
+            "use_relays": True,
         }
 
     with open(os.path.join(node_dir, "config.yml"), "w") as config_file:
