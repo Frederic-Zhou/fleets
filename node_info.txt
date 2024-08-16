@@ -1,4 +1,6 @@
 lighthouse1 192.168.100.1/24 lighthouse
-frederic-mb 192.168.100.2/24 node
-Dee 192.168.100.3/24 node
+frederic 192.168.100.2/24 node
 frederic-tp 192.168.100.4/24 node
+asong 192.168.100.11/24 node
+awsDesktop 192.168.100.12/24 node
+myphone 192.168.100.21/24 node

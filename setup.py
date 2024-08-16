@@ -81,7 +81,11 @@ elif action == "2":
 
     if is_lighthouse:
         config_data["static_host_map"] = {}
-        config_data["lighthouse"] = {"am_lighthouse": True}
+        config_data["lighthouse"] = {
+            "am_lighthouse": True,
+            "serve_dns": True,
+            "dns": {"host": "[::]", "port": 53},
+        }
         config_data["relay"] = {"am_relay": True, "use_relays": False}
     else:
         lighthouse_ip = input("请输入lighthouse的IP地址: ")
