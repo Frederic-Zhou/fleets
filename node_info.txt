@@ -1,6 +1,12 @@
 lighthouse1 192.168.100.1/24 lighthouse
 frederic 192.168.100.2/24 node
+OfficeServer 192.168.100.3/24 node
 frederic-tp 192.168.100.4/24 node
+Dee 192.168.100.5/25 node
+Bao 192.168.100.6/24 node
+JY 192.168.100.7/24 node
 asong 192.168.100.11/24 node
 awsDesktop 192.168.100.12/24 node
-myphone 192.168.100.21/24 node
+
+lighthouse2 192.168.100.100/24 lighthouse
+Ken 192.168.100.101/24 node
