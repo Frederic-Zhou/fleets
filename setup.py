@@ -5,17 +5,17 @@ import subprocess
 import yaml
 
 # 定义一些常量
-NEBULA_BINARIES_CERT = {
-    "darwin": "nebula-darwin/nebula-cert",
-    "linux": "nebula-linux-amd64/nebula-cert",
-    "windows": "nebula-windows-amd64/nebula-cert.exe",
-}
+# NEBULA_BINARIES_CERT = {
+#     "darwin": "nebula-darwin/nebula-cert",
+#     "linux": "nebula-linux-amd64/nebula-cert",
+#     "windows": "nebula-windows-amd64/nebula-cert.exe",
+# }
 
-NEBULA_BINARIES_BIN = {
-    "darwin": "nebula-darwin/nebula",
-    "linux": "nebula-linux-amd64/nebula",
-    "windows": "nebula-windows-amd64/nebula.exe",
-}
+# NEBULA_BINARIES_BIN = {
+#     "darwin": "nebula-darwin/nebula",
+#     "linux": "nebula-linux-amd64/nebula",
+#     "windows": "nebula-windows-amd64/nebula.exe",
+# }
 
 CONFIG_TEMPLATE = "config.yml"
 NODES_DIR = "nodes"
@@ -31,14 +31,14 @@ if not os.path.exists(NODE_INFO_FILE):
 
 # 检查系统类型
 system_type = platform.system().lower()
-nebula_binary = NEBULA_BINARIES_CERT.get(system_type, "nebula-linux-amd64/nebula-cert")
+# nebula_binary = NEBULA_BINARIES_CERT.get(system_type, "nebula-linux-amd64/nebula-cert")
 
 # 询问用户初始化还是创建节点
 action = input("请选择操作: 1) 初始化 2) 创建节点 (输入 1 或 2): ")
 
 if action == "1":
     ca_name = input("请输入CA名称 (默认: MyNebulaCA): ") or "MyNebulaCA"
-    subprocess.run([nebula_binary, "ca", "-name", ca_name], check=True)
+    subprocess.run(["nebula", "ca", "-name", ca_name], check=True)
     print("CA 已初始化")
 
 elif action == "2":
@@ -52,23 +52,23 @@ elif action == "2":
 
     # 生成节点证书
     subprocess.run(
-        [nebula_binary, "sign", "-name", node_name, "-ip", node_ip], check=True
+        ["nebula-cert", "sign", "-name", node_name, "-ip", node_ip], check=True
     )
     shutil.move(f"{node_name}.crt", f"{node_dir}/host.crt")
     shutil.move(f"{node_name}.key", f"{node_dir}/host.key")
     shutil.copyfile("ca.crt", f"{node_dir}/ca.crt")
 
     # 拷贝nebula二进制文件，并设置可执行权限
-    for bin_name, bin_path in NEBULA_BINARIES_BIN.items():
-        if os.path.exists(bin_path):
-            if bin_name == "windows":
-                dest_path = os.path.join(node_dir, "nebula-windows.exe")
-            else:
-                dest_path = os.path.join(node_dir, f"nebula-{bin_name.split('/')[0]}")
+    # for bin_name, bin_path in NEBULA_BINARIES_BIN.items():
+    #     if os.path.exists(bin_path):
+    #         if bin_name == "windows":
+    #             dest_path = os.path.join(node_dir, "nebula-windows.exe")
+    #         else:
+    #             dest_path = os.path.join(node_dir, f"nebula-{bin_name.split('/')[0]}")
 
-            shutil.copyfile(bin_path, dest_path)
-            if system_type != "windows":
-                os.chmod(dest_path, 0o755)  # 设置可执行权限
+    #         shutil.copyfile(bin_path, dest_path)
+    #         if system_type != "windows":
+    #             os.chmod(dest_path, 0o755)  # 设置可执行权限
 
     # 创建并修改配置文件
     with open(CONFIG_TEMPLATE, "r") as config_file:
@@ -83,7 +83,7 @@ elif action == "2":
         config_data["static_host_map"] = {}
         config_data["lighthouse"] = {
             "am_lighthouse": True,
-            "serve_dns": True,
+            "serve_dns": False,
             "dns": {"host": "[::]", "port": 53},
         }
         config_data["relay"] = {"am_relay": True, "use_relays": False}
@@ -119,35 +119,35 @@ elif action == "2":
         info_file.write(f"IP地址: {node_ip}\n")
         info_file.write(f"类型: {'lighthouse' if is_lighthouse else 'node'}\n")
 
-    # 创建启动脚本
-    with open(os.path.join(node_dir, "start.sh"), "w") as start_file:
-        start_file.write(f"#!/bin/bash\n")
-        start_file.write(f'case "$(uname -s)" in\n')
-        start_file.write(
-            f"  Linux*)   exec sudo ./nebula-linux -config config.yml ;;\n"
-        )
-        start_file.write(
-            f"  Darwin*)  exec sudo ./nebula-darwin -config config.yml ;;\n"
-        )
-        start_file.write(
-            f"  CYGWIN*|MINGW32*|MSYS*|MINGW*) exec ./nebula-windows.exe -config config.yml ;;\n"
-        )
-        start_file.write(f'  *)        echo "Unknown OS" ;;\n')
-        start_file.write(f"esac\n")
-    os.chmod(os.path.join(node_dir, "start.sh"), 0o755)
+    # # 创建启动脚本
+    # with open(os.path.join(node_dir, "start.sh"), "w") as start_file:
+    #     start_file.write(f"#!/bin/bash\n")
+    #     start_file.write(f'case "$(uname -s)" in\n')
+    #     start_file.write(
+    #         f"  Linux*)   exec sudo ./nebula-linux -config config.yml ;;\n"
+    #     )
+    #     start_file.write(
+    #         f"  Darwin*)  exec sudo ./nebula-darwin -config config.yml ;;\n"
+    #     )
+    #     start_file.write(
+    #         f"  CYGWIN*|MINGW32*|MSYS*|MINGW*) exec ./nebula-windows.exe -config config.yml ;;\n"
+    #     )
+    #     start_file.write(f'  *)        echo "Unknown OS" ;;\n')
+    #     start_file.write(f"esac\n")
+    # os.chmod(os.path.join(node_dir, "start.sh"), 0o755)
 
-    # 创建 Windows 启动脚本
-    with open(os.path.join(node_dir, "start.bat"), "w") as start_file:
-        start_file.write(f"@echo off\n")
-        start_file.write(
-            f"if not exist C:\\Program Files\\TAP-Windows\\bin\\tapinstall.exe (\n"
-        )
-        start_file.write(
-            f"    echo TAP-Windows 驱动程序未安装. 请先安装 TAP-Windows 驱动程序.\n"
-        )
-        start_file.write(f"    exit /b 1\n")
-        start_file.write(f")\n")
-        start_file.write(f"nebula-windows.exe -config config.yml\n")
+    # # 创建 Windows 启动脚本
+    # with open(os.path.join(node_dir, "start.bat"), "w") as start_file:
+    #     start_file.write(f"@echo off\n")
+    #     start_file.write(
+    #         f"if not exist C:\\Program Files\\TAP-Windows\\bin\\tapinstall.exe (\n"
+    #     )
+    #     start_file.write(
+    #         f"    echo TAP-Windows 驱动程序未安装. 请先安装 TAP-Windows 驱动程序.\n"
+    #     )
+    #     start_file.write(f"    exit /b 1\n")
+    #     start_file.write(f")\n")
+    #     start_file.write(f"nebula-windows.exe -config config.yml\n")
 
     print(f"节点 {node_name} 已创建")
 else:
