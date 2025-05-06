@@ -1,0 +1,4 @@
+lighthouse 10.66.66.1/24 lighthouse
+macbook m3x 10.66.66.2/24 node
+thinkpad p53 10.66.66.3/24 node
+thinkbook16p 10.66.66.5/24 node
